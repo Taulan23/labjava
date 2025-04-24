@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:my="http://xmlns.jcp.org/jsf/composite/mytaglib">
+
+<ui:composition template="/WEB-INF/templates/main-template.xhtml">
+    <ui:define name="title">#{msgs['client.dashboard']}</ui:define>
+    
+    <ui:define name="content">
+        <h2>#{msgs['client.dashboard']}</h2>
+        
+        <h:messages globalOnly="true" infoClass="alert alert-success" errorClass="alert alert-danger"/>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <div style="width: 48%;">
+                <h3>#{msgs['client.my_rentals']}</h3>
+                
+                <h:form id="myRentalsForm">
+                    <h:dataTable value="#{rentalBean.userRentals}" var="rental" styleClass="table"
+                                 rendered="#{not empty rentalBean.userRentals}">
+                        <h:column>
+                            <f:facet name="header">Автомобиль</f:facet>
+                            #{rental.car.name} (#{rental.car.serialNumber})
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">#{msgs['rental.start_date']}</f:facet>
+                            <h:outputText value="#{rental.startDate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">#{msgs['rental.end_date']}</f:facet>
+                            <h:outputText value="#{rental.endDate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">#{msgs['rental.days']}</f:facet>
+                            #{rental.days}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">#{msgs['rental.total']}</f:facet>
+                            #{rental.totalPrice}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Действия</f:facet>
+                            <h:commandButton value="#{msgs['client.return_car']}" 
+                                           actionListener="#{rentalBean.returnCar(rental)}" 
+                                           styleClass="button" style="background-color: #27ae60;"/>
+                        </h:column>
+                    </h:dataTable>
+                    
+                    <h:panelGroup rendered="#{empty rentalBean.userRentals}">
+                        <p>У вас нет арендованных автомобилей.</p>
+                    </h:panelGroup>
+                </h:form>
+            </div>
+            
+            <div style="width: 48%;">
+                <h3>#{msgs['client.available_cars']}</h3>
+                
+                <h:form id="availableCarsForm">
+                    <h:dataTable value="#{carBean.availableCars}" var="car" styleClass="table"
+                                 rendered="#{not empty carBean.availableCars}">
+                        <h:column>
+                            <f:facet name="header">#{msgs['car.name']}</f:facet>
+                            #{car.name}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">#{msgs['car.color']}</f:facet>
+                            #{car.color}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">#{msgs['car.condition']}</f:facet>
+                            #{car.condition}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">#{msgs['car.price']}</f:facet>
+                            #{car.dailyPrice}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Действия</f:facet>
+                            <h:commandButton value="Выбрать" actionListener="#{rentalBean.selectCar(car)}" 
+                                           styleClass="button"/>
+                        </h:column>
+                    </h:dataTable>
+                    
+                    <h:panelGroup rendered="#{empty carBean.availableCars}">
+                        <p>Нет доступных автомобилей для аренды.</p>
+                    </h:panelGroup>
+                </h:form>
+                
+                <h:form id="rentCarForm" rendered="#{rentalBean.selectedCar != null}" style="margin-top: 20px;">
+                    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 5px;">
+                        <h4>#{msgs['client.rent_car']}: #{rentalBean.selectedCar.name}</h4>
+                        
+                        <div class="form-group">
+                            <label class="form-label">#{msgs['car.name']}:</label>
+                            <h:inputText value="#{rentalBean.selectedCar.name}" readonly="true" styleClass="form-control"/>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">#{msgs['car.color']}:</label>
+                            <h:inputText value="#{rentalBean.selectedCar.color}" readonly="true" styleClass="form-control"/>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">#{msgs['car.condition']}:</label>
+                            <h:inputText value="#{rentalBean.selectedCar.condition}" readonly="true" styleClass="form-control"/>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">#{msgs['car.price']}:</label>
+                            <h:inputText value="#{rentalBean.selectedCar.dailyPrice}" readonly="true" styleClass="form-control"/>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">#{msgs['client.days']}:</label>
+                            <h:inputText value="#{rentalBean.rentalDays}" styleClass="form-control">
+                                <f:ajax event="change" listener="#{rentalBean.calculateTotalPrice}" render="totalPrice"/>
+                            </h:inputText>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">#{msgs['client.total_price']}:</label>
+                            <h:outputText id="totalPrice" value="#{rentalBean.totalPrice}"/>
+                        </div>
+                        
+                        <div style="margin-top: 15px;">
+                            <h:commandButton value="#{msgs['client.rent_car']}" actionListener="#{rentalBean.rentCar}" 
+                                           styleClass="button"/>
+                            <h:commandButton value="Отмена" actionListener="#{rentalBean.cancelSelection}" immediate="true"
+                                           styleClass="button" style="margin-left: 10px;"/>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+</html> 

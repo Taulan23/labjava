@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+
+<cc:interface>
+    <cc:attribute name="label" required="true" type="java.lang.String"/>
+    <cc:attribute name="property" required="true"/>
+    <cc:attribute name="required" default="false" type="java.lang.Boolean"/>
+    <cc:attribute name="requiredMessage" default="Поле обязательно для заполнения" type="java.lang.String"/>
+    <cc:attribute name="type" default="text" type="java.lang.String"/>
+</cc:interface>
+
+<cc:implementation>
+    <div style="margin-bottom: 10px;">
+        <div style="display: flex; flex-direction: column;">
+            <label for="#{cc.clientId}:input" style="font-weight: bold; margin-bottom: 5px;">
+                #{cc.attrs.label}:
+                <h:outputText value="*" style="color: red;" rendered="#{cc.attrs.required}"/>
+            </label>
+            <h:inputText id="input" 
+                         value="#{cc.attrs.property}" 
+                         required="#{cc.attrs.required}"
+                         requiredMessage="#{cc.attrs.requiredMessage}"
+                         type="#{cc.attrs.type == 'password' ? 'password' : 'text'}"
+                         style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+        </div>
+        <div style="margin-top: 5px;">
+            <h:message for="#{cc.clientId}:input" style="color: red; font-size: 12px;"/>
+        </div>
+    </div>
+</cc:implementation>
+</html> 

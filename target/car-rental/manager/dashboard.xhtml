@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="/WEB-INF/templates/main-template.xhtml">
+    <ui:define name="title">Панель менеджера</ui:define>
+    
+    <ui:define name="content">
+        <h2>Панель менеджера</h2>
+        
+        <h:messages id="messages" globalOnly="true" infoClass="alert alert-success" errorClass="alert alert-danger"/>
+        
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <div style="width: 48%;">
+                <h3>Управление автомобилями</h3>
+                
+                <h:form id="carForm">
+                    <h4>Добавить/редактировать автомобиль</h4>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">
+                            Название: <span style="color: red;">*</span>
+                        </label>
+                        <h:inputText value="#{carBean.car.name}" 
+                                    required="true"
+                                    requiredMessage="Название обязательно"
+                                    style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+                        <h:message for="@previous" style="color: red; font-size: 12px;"/>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">
+                            Цвет:
+                        </label>
+                        <h:inputText value="#{carBean.car.color}" 
+                                    style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+                        <h:message for="@previous" style="color: red; font-size: 12px;"/>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">
+                            Серийный номер: <span style="color: red;">*</span>
+                        </label>
+                        <h:inputText value="#{carBean.car.serialNumber}" 
+                                    required="true"
+                                    requiredMessage="Серийный номер обязателен"
+                                    style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+                        <h:message for="@previous" style="color: red; font-size: 12px;"/>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">
+                            Состояние:
+                        </label>
+                        <h:inputText value="#{carBean.car.condition}" 
+                                    style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+                        <h:message for="@previous" style="color: red; font-size: 12px;"/>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-weight: bold; margin-bottom: 5px; display: block;">
+                            Стоимость в день: <span style="color: red;">*</span>
+                        </label>
+                        <h:inputText value="#{carBean.car.dailyPrice}" 
+                                    required="true"
+                                    requiredMessage="Стоимость обязательна"
+                                    style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+                        <h:message for="@previous" style="color: red; font-size: 12px;"/>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <h:commandButton value="Добавить автомобиль" actionListener="#{carBean.createCar}" 
+                                        rendered="#{carBean.car.id == null}"
+                                        styleClass="button"/>
+                        <h:commandButton value="Обновить автомобиль" actionListener="#{carBean.updateCar}" 
+                                        rendered="#{carBean.car.id != null}"
+                                        styleClass="button"/>
+                        <h:commandButton value="Отмена" actionListener="#{carBean.init}" immediate="true" 
+                                        rendered="#{carBean.car.id != null}" 
+                                        style="margin-left: 10px;"
+                                        styleClass="button"/>
+                    </div>
+                </h:form>
+                
+                <h:form id="carListForm">
+                    <h4>Список автомобилей</h4>
+                    
+                    <h:dataTable value="#{carBean.cars}" var="car" styleClass="table">
+                        <h:column>
+                            <f:facet name="header">Название</f:facet>
+                            #{car.name}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Цвет</f:facet>
+                            #{car.color}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Серийный номер</f:facet>
+                            #{car.serialNumber}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Состояние</f:facet>
+                            #{car.condition}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Стоимость</f:facet>
+                            #{car.dailyPrice}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Статус</f:facet>
+                            <h:outputText value="#{car.available ? 'Доступен' : 'Арендован'}"/>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Действия</f:facet>
+                            <h:commandButton value="Изменить" styleClass="button"
+                                           actionListener="#{carBean.prepareEditCar(car)}"
+                                           style="margin-right: 5px;">
+                                <f:ajax execute="@this" render=":carForm"/>
+                            </h:commandButton>
+                            
+                            <h:commandButton value="Удалить" styleClass="button" 
+                                           actionListener="#{carBean.deleteCar(car)}"
+                                           style="background-color: #e74c3c;">
+                                <f:ajax execute="@this" render=":carListForm :carForm :messages"/>
+                            </h:commandButton>
+                        </h:column>
+                    </h:dataTable>
+                </h:form>
+            </div>
+            
+            <div style="width: 48%;">
+                <h3>Текущие аренды</h3>
+                
+                <h:form id="rentalListForm">
+                    <h:dataTable value="#{rentalBean.activeRentals}" var="rental" styleClass="table">
+                        <h:column>
+                            <f:facet name="header">Клиент</f:facet>
+                            #{rental.client.name}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Автомобиль</f:facet>
+                            #{rental.car.name} (#{rental.car.serialNumber})
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Дата начала</f:facet>
+                            <h:outputText value="#{rental.startDate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Дата окончания</f:facet>
+                            <h:outputText value="#{rental.endDate}">
+                                <f:convertDateTime pattern="dd.MM.yyyy" type="localDate"/>
+                            </h:outputText>
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Дней</f:facet>
+                            #{rental.days}
+                        </h:column>
+                        
+                        <h:column>
+                            <f:facet name="header">Итого</f:facet>
+                            #{rental.totalPrice}
+                        </h:column>
+                    </h:dataTable>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>
+</html> 

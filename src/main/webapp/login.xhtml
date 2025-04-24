@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:my="http://xmlns.jcp.org/jsf/composite/mytaglib">
+
+<ui:composition template="/WEB-INF/templates/main-template.xhtml">
+    <ui:define name="title">Авторизация</ui:define>
+    
+    <ui:define name="content">
+        <h2>Авторизация</h2>
+        
+        <h:form id="loginForm">
+            <h:messages globalOnly="true" styleClass="alert alert-danger"/>
+            
+            <div style="width: 400px; margin: 0 auto;">
+                <div style="margin-bottom: 10px;">
+                    <label style="font-weight: bold; margin-bottom: 5px; display: block;">
+                        Email: <span style="color: red;">*</span>
+                    </label>
+                    <h:inputText value="#{userBean.email}" 
+                                required="true"
+                                requiredMessage="Пожалуйста, введите email"
+                                style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+                    <h:message for="@previous" style="color: red; font-size: 12px;"/>
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <label style="font-weight: bold; margin-bottom: 5px; display: block;">
+                        Пароль: <span style="color: red;">*</span>
+                    </label>
+                    <h:inputSecret value="#{userBean.password}" 
+                                required="true"
+                                requiredMessage="Пожалуйста, введите пароль"
+                                style="padding: 5px; border-radius: 3px; border: 1px solid #ccc; width: 100%;"/>
+                    <h:message for="@previous" style="color: red; font-size: 12px;"/>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <h:commandButton value="Войти" action="#{userBean.login}" 
+                                     styleClass="button"/>
+                    
+                    <h:outputText value=" " />
+                    
+                    <h:link outcome="/faces/register" value="Регистрация" 
+                                  style="margin-left: 20px;"/>
+                </div>
+            </div>
+        </h:form>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <p>Данные для входа:</p>
+            <p>Администратор: admin@example.com / admin</p>
+            <p>Клиент: ivan@example.com / password</p>
+        </div>
+    </ui:define>
+</ui:composition>
+</html> 
