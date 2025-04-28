@@ -8,28 +8,50 @@
 - Maven 3.6+
 - Доступ в интернет для загрузки зависимостей
 
-## Сборка и запуск приложения
+## Настройка Maven на Windows
 
-### 1. Настройка Java
+1. Скачайте и распакуйте Apache Maven (версия 3.6+) из https://maven.apache.org/download.cgi в, например, C:\apache-maven.
 
-```bash
-# Для Mac OS
-export JAVA_HOME=$(/usr/libexec/java_home -v 11)
+2. Добавьте системную переменную MAVEN_HOME, указывающую на каталог установки, например:
 
-# Для Windows
-# set JAVA_HOME=путь_к_java_11
+```cmd
+setx MAVEN_HOME "C:\apache-maven-3.6.3"
 ```
 
-### 2. Сборка проекта
+3. Добавьте %MAVEN_HOME%\bin в системную переменную PATH:
 
-```bash
+```cmd
+setx PATH "%PATH%;%MAVEN_HOME%\bin"
+```
+
+4. Проверьте установку, выполнив:
+
+```cmd
+mvn -v
+```
+
+Если всё успешно, Maven готов к использованию.
+
+## Сборка и запуск приложения
+
+### 1. Настройка Java (Windows)
+
+```cmd
+rem Укажите путь к установленной Java 11
+set JAVA_HOME=C:\Program Files\Java\jdk-11.0.x
+set PATH=%JAVA_HOME%\bin;%PATH%
+```
+
+### 2. Сборка проекта (Windows)
+
+```cmd
 mvn clean package
 ```
 
-### 3. Запуск приложения
+### 3. Запуск приложения (Windows)
 
-```bash
-java -jar $HOME/.m2/repository/fish/payara/extras/payara-micro/5.2022.2/payara-micro-5.2022.2.jar --deploy target/car-rental.war --contextroot /car-rental --port 8081 --nocluster
+```cmd
+java -jar "%USERPROFILE%\.m2\repository\fish\payara\extras\payara-micro\5.2022.2\payara-micro-5.2022.2.jar" --deploy target\car-rental.war --contextroot /car-rental --port 8081 --nocluster
 ```
 
 После запуска приложение будет доступно по адресу:
