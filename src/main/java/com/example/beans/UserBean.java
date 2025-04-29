@@ -37,13 +37,26 @@ public class UserBean implements Serializable {
     }
 
     public String login() {
-        User foundUser = userService.findByEmail(email);
-        if (foundUser != null && foundUser.getPassword().equals(password)) {
+        try {
+            User foundUser = userService.findByEmail(email);
+            if (foundUser == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ошибка входа", "Пользователь с email " + email + " не найден"));
+                return null;
+            }
+            
+            if (!foundUser.getPassword().equals(password)) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ошибка входа", "Неверный пароль"));
+                return null;
+            }
+            
             sessionBean.setCurrentUser(foundUser);
             return foundUser.getRole().equals("MANAGER") ? "manager" : "client";
-        } else {
+        } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Ошибка входа", "Неверный email или пароль"));
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Системная ошибка", "Ошибка при входе: " + e.getMessage()));
+            e.printStackTrace();
             return null;
         }
     }
